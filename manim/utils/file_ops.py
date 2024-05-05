@@ -1,6 +1,7 @@
 """Utility functions for interacting with the file system."""
 
 from __future__ import annotations
+from security import safe_command
 
 __all__ = [
     "add_extension_if_not_present",
@@ -205,7 +206,7 @@ def open_file(file_path, in_browser=False):
         else:
             raise OSError("Unable to identify your operating system...")
         commands.append(file_path)
-        sp.Popen(commands)
+        safe_command.run(sp.Popen, commands)
 
 
 def open_media_file(file_writer: SceneFileWriter) -> None:

@@ -1,6 +1,7 @@
 """The interface between scenes and ffmpeg."""
 
 from __future__ import annotations
+from security import safe_command
 
 __all__ = ["SceneFileWriter"]
 
@@ -515,7 +516,7 @@ class SceneFileWriter:
         else:
             command += ["-vcodec", "libx264", "-pix_fmt", "yuv420p"]
         command += [file_path]
-        self.writing_process = subprocess.Popen(command, stdin=subprocess.PIPE)
+        self.writing_process = safe_command.run(subprocess.Popen, command, stdin=subprocess.PIPE)
 
     def close_movie_pipe(self):
         """
@@ -596,7 +597,7 @@ class SceneFileWriter:
 
         commands += [str(output_file)]
 
-        combine_process = subprocess.Popen(commands)
+        combine_process = safe_command.run(subprocess.Popen, commands)
         combine_process.wait()
 
     def combine_to_movie(self):
@@ -660,7 +661,7 @@ class SceneFileWriter:
                 # "-shortest",
                 str(temp_file_path),
             ]
-            subprocess.call(commands)
+            safe_command.run(subprocess.call, commands)
             shutil.move(str(temp_file_path), str(movie_file_path))
             sound_file_path.unlink()
 
