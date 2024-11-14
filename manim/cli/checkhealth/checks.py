@@ -9,6 +9,7 @@ import subprocess
 from typing import Callable
 
 from ..._config import config
+from security import safe_command
 
 __all__ = ["HEALTH_CHECKS"]
 
@@ -133,8 +134,7 @@ def is_ffmpeg_available():
     skip_on_failed=[is_ffmpeg_available],
 )
 def is_ffmpeg_working():
-    ffmpeg_version = subprocess.run(
-        [config.ffmpeg_executable, "-version"],
+    ffmpeg_version = safe_command.run(subprocess.run, [config.ffmpeg_executable, "-version"],
         stdout=subprocess.PIPE,
     ).stdout.decode()
     return (
